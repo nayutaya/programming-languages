@@ -1,12 +1,26 @@
 #[derive(Debug, PartialEq)]
 enum Instruction {
     Increment,
+    Decrement,
+    PointerIncrement,
+    PointerDecrement,
+    Output,
+    Input,
+    LoopBegin,
+    LoopEnd,
     Invalid,
 }
 
 fn parse_char(ch: char) -> Instruction {
     match ch {
         '>' => Instruction::Increment,
+        '<' => Instruction::Decrement,
+        '+' => Instruction::PointerIncrement,
+        '-' => Instruction::PointerDecrement,
+        '.' => Instruction::Output,
+        ',' => Instruction::Input,
+        '[' => Instruction::LoopBegin,
+        ']' => Instruction::LoopEnd,
         _   => Instruction::Invalid,
     }
 }
@@ -22,6 +36,13 @@ mod tests {
     #[test]
     fn can_parse_char() {
         assert_eq!(Instruction::Increment, parse_char('>'));
+        assert_eq!(Instruction::Decrement, parse_char('<'));
+        assert_eq!(Instruction::PointerIncrement, parse_char('+'));
+        assert_eq!(Instruction::PointerDecrement, parse_char('-'));
+        assert_eq!(Instruction::LoopBegin, parse_char('['));
+        assert_eq!(Instruction::LoopEnd, parse_char(']'));
+        assert_eq!(Instruction::Output, parse_char('.'));
+        assert_eq!(Instruction::Input, parse_char(','));
         assert_eq!(Instruction::Invalid, parse_char(' '));
     }
 
@@ -32,9 +53,16 @@ mod tests {
         assert_eq!(
             vec![
                 Instruction::Increment,
+                Instruction::Decrement,
+                Instruction::PointerIncrement,
+                Instruction::PointerDecrement,
+                Instruction::Output,
+                Instruction::Input,
+                Instruction::LoopBegin,
+                Instruction::LoopEnd,
                 Instruction::Invalid,
             ],
-            parse_instructions("> "));
+            parse_instructions("><+-.,[] "));
     }
 }
 
