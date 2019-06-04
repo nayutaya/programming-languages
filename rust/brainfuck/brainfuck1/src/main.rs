@@ -11,18 +11,24 @@ enum Instruction {
     Invalid(char),
 }
 
-fn parse_char(ch: char) -> Instruction {
-    match ch {
-        '>' => Instruction::Increment,
-        '<' => Instruction::Decrement,
-        '+' => Instruction::PointerIncrement,
-        '-' => Instruction::PointerDecrement,
-        '.' => Instruction::Output,
-        ',' => Instruction::Input,
-        '[' => Instruction::LoopBegin,
-        ']' => Instruction::LoopEnd,
-        _   => Instruction::Invalid(ch),
+impl From<char> for Instruction {
+    fn from(ch: char) -> Self {
+        match ch {
+            '>' => Instruction::Increment,
+            '<' => Instruction::Decrement,
+            '+' => Instruction::PointerIncrement,
+            '-' => Instruction::PointerDecrement,
+            '.' => Instruction::Output,
+            ',' => Instruction::Input,
+            '[' => Instruction::LoopBegin,
+            ']' => Instruction::LoopEnd,
+            _   => Instruction::Invalid(ch),
+        }
     }
+}
+
+fn parse_char(ch: char) -> Instruction {
+    ch.into()
 }
 
 fn parse_instructions(inst: &str) -> Vec<Instruction> {
@@ -34,16 +40,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn can_parse_char() {
-        assert_eq!(Instruction::Increment, parse_char('>'));
-        assert_eq!(Instruction::Decrement, parse_char('<'));
-        assert_eq!(Instruction::PointerIncrement, parse_char('+'));
-        assert_eq!(Instruction::PointerDecrement, parse_char('-'));
-        assert_eq!(Instruction::LoopBegin, parse_char('['));
-        assert_eq!(Instruction::LoopEnd, parse_char(']'));
-        assert_eq!(Instruction::Output, parse_char('.'));
-        assert_eq!(Instruction::Input, parse_char(','));
-        assert_eq!(Instruction::Invalid(' '), parse_char(' '));
+    fn can_convert_char_into_inst() {
+        assert_eq!(Instruction::Increment, '>'.into());
+        assert_eq!(Instruction::Decrement, '<'.into());
+        assert_eq!(Instruction::PointerIncrement, '+'.into());
+        assert_eq!(Instruction::PointerDecrement, '-'.into());
+        assert_eq!(Instruction::LoopBegin, '['.into());
+        assert_eq!(Instruction::LoopEnd, ']'.into());
+        assert_eq!(Instruction::Output, '.'.into());
+        assert_eq!(Instruction::Input, ','.into());
+        assert_eq!(Instruction::Invalid(' '), ' '.into());
     }
 
     #[test]
