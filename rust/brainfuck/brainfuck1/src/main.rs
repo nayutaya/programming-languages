@@ -8,7 +8,7 @@ enum Instruction {
     Input,
     LoopBegin,
     LoopEnd,
-    Invalid,
+    Invalid(char),
 }
 
 fn parse_char(ch: char) -> Instruction {
@@ -21,7 +21,7 @@ fn parse_char(ch: char) -> Instruction {
         ',' => Instruction::Input,
         '[' => Instruction::LoopBegin,
         ']' => Instruction::LoopEnd,
-        _   => Instruction::Invalid,
+        _   => Instruction::Invalid(ch),
     }
 }
 
@@ -43,7 +43,7 @@ mod tests {
         assert_eq!(Instruction::LoopEnd, parse_char(']'));
         assert_eq!(Instruction::Output, parse_char('.'));
         assert_eq!(Instruction::Input, parse_char(','));
-        assert_eq!(Instruction::Invalid, parse_char(' '));
+        assert_eq!(Instruction::Invalid(' '), parse_char(' '));
     }
 
     #[test]
@@ -60,7 +60,7 @@ mod tests {
                 Instruction::Input,
                 Instruction::LoopBegin,
                 Instruction::LoopEnd,
-                Instruction::Invalid,
+                Instruction::Invalid(' '),
             ],
             parse_instructions("><+-.,[] "));
     }
