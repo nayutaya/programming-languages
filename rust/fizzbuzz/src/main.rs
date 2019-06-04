@@ -1,9 +1,22 @@
+use std::borrow::Cow;
+
+/*
 fn fizzbuzz1(i: u32) -> String {
     match i {
         _ if i % 15 == 0 => { "FizzBuzz".into() }
         _ if i %  5 == 0 => { "Buzz".into() }
         _ if i %  3 == 0 => { "Fizz".into() }
-        _ => { format!("{}", i) }
+        _ => { i.to_string() }
+    }
+}
+*/
+
+fn fizzbuzz2(i: u32) -> Cow<'static, str> {
+    match i {
+        _ if i % 15 == 0 => { "FizzBuzz".into() }
+        _ if i %  5 == 0 => { "Buzz".into() }
+        _ if i %  3 == 0 => { "Fizz".into() }
+        _ => { i.to_string().into() }
     }
 }
 
@@ -23,6 +36,9 @@ fn main() {
             _ => { println!("{}", i); }
         }
         */
+        /*
         println!("{}", fizzbuzz1(i));
+        */
+        println!("{}", fizzbuzz2(i));
     }
 }
