@@ -33,19 +33,50 @@ fn parse_instructions(inst: &str) -> Vec<Instruction> {
     inst.chars().map(|ch| ch.into()).collect()
 }
 
+struct Tape {
+    map: HashMap<usize, u8>,
+    head: usize,
+}
+
+impl Tape {
+    fn new() -> Self {
+        Tape {
+            map: HashMap::new(),
+            head: 0,
+        }
+    }
+
+    fn len(&self) -> usize {
+        self.map.len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.map.is_empty()
+    }
+
+    fn increment(&mut self) {
+        let entry = self.map.entry(self.head).or_insert(0);
+        *entry += 1;
+    }
+}
+
 struct Context {
-    tape: HashMap<usize, u8>,
+    tape: Tape,
 }
 
 impl Context {
     fn new() -> Self {
         Context {
-            tape: HashMap::new(),
+            tape: Tape::new(),
         }
     }
 }
 
 fn execute(context: Context, insts: &Vec<Instruction>) -> Context {
+    let mut context = context;
+    if insts.len() == 1 && insts[0] == Instruction::PointerIncrement {
+        context.tape.increment();
+    }
     context
 }
 
@@ -92,6 +123,23 @@ mod tests {
         let context2 = execute(context1, &Vec::new());
         assert_eq!(true, context2.tape.is_empty());
     }
+
+    #[test]
+    fn one() {
+        let context = execute(Context::new(), &vec![Instruction::PointerIncrement]);
+        assert_eq!(1, context.tape.len());
+    }
+
+    /*
+    #[test]
+    fn print_space() {
+        let context1 = Context::new();
+        let insts = Vec::new();
+        for i in 1..=32 { insts.push(Instruction::Increment); }
+        let context2 = execute(context1, &insts);
+        // assert_eq!(true, context2.tape.is_empty());
+    }
+    */
 }
 
 fn main() {
