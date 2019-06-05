@@ -58,6 +58,11 @@ impl Tape {
         let entry = self.map.entry(self.head).or_insert(0);
         *entry += 1;
     }
+
+    fn decrement(&mut self) {
+        let entry = self.map.entry(self.head).or_insert(0);
+        *entry -= 1;
+    }
 }
 
 struct Context {
@@ -74,8 +79,12 @@ impl Context {
 
 fn execute(context: Context, insts: &Vec<Instruction>) -> Context {
     let mut context = context;
-    if insts.len() == 1 && insts[0] == Instruction::Increment {
-        context.tape.increment();
+    for inst in insts {
+        match inst {
+            Instruction::Increment => { context.tape.increment(); }
+            Instruction::Decrement => { context.tape.decrement(); }
+            _ => {}
+        }
     }
     context
 }
@@ -119,15 +128,30 @@ mod tests {
 
     #[test]
     fn empty() {
-        let context1 = Context::new();
-        let context2 = execute(context1, &Vec::new());
-        assert_eq!(true, context2.tape.is_empty());
+        let insts = Vec::new();
+        let context = execute(Context::new(), &insts);
+        assert_eq!(true, context.tape.is_empty());
     }
 
     #[test]
     fn one() {
-        let context = execute(Context::new(), &vec![Instruction::Increment]);
-        assert_eq!(1, context.tape.len());
+        let insts = vec![Instruction::Increment];
+        let context = execute(Context::new(), &insts);
+        let mut tape = HashMap::new();
+        tape.insert(0, 1);
+        assert_eq!(tape, context.tape.map);
+    }
+
+    #[test]
+    fn zero() {
+        let insts = vec![
+            Instruction::Increment,
+            Instruction::Decrement,
+        ];
+        let context = execute(Context::new(), &insts);
+        let mut tape = HashMap::new();
+        tape.insert(0, 0);
+        assert_eq!(tape, context.tape.map);
     }
 
     /*
