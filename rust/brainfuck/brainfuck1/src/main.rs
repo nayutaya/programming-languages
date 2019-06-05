@@ -46,12 +46,22 @@ impl Tape {
         }
     }
 
+    /*
     fn len(&self) -> usize {
         self.map.len()
     }
+    */
 
     fn is_empty(&self) -> bool {
         self.map.is_empty()
+    }
+
+    fn move_to_right(&mut self) {
+        self.head += 1;
+    }
+
+    fn move_to_left(&mut self) {
+        self.head -= 1;
     }
 
     fn increment(&mut self) {
@@ -77,16 +87,22 @@ impl Context {
     }
 }
 
-fn execute(context: Context, insts: &Vec<Instruction>) -> Context {
+fn execute_with(context: Context, insts: &Vec<Instruction>) -> Context {
     let mut context = context;
     for inst in insts {
         match inst {
-            Instruction::Increment => { context.tape.increment(); }
-            Instruction::Decrement => { context.tape.decrement(); }
+            Instruction::MoveToRight => { context.tape.move_to_right(); }
+            Instruction::MoveToLeft  => { context.tape.move_to_left(); }
+            Instruction::Increment   => { context.tape.increment(); }
+            Instruction::Decrement   => { context.tape.decrement(); }
             _ => {}
         }
     }
     context
+}
+
+fn execute(insts: &str) -> Context {
+    execute_with(Context::new(), &parse_instructions(&insts))
 }
 
 #[cfg(test)]
@@ -128,16 +144,14 @@ mod tests {
 
     #[test]
     fn empty() {
-        let insts = parse_instructions("");
-        let context = execute(Context::new(), &insts);
+        let context = execute("");
         assert_eq!(true, context.tape.is_empty());
         assert_eq!(0, context.tape.head);
     }
 
     #[test]
     fn one() {
-        let insts = parse_instructions("+");
-        let context = execute(Context::new(), &insts);
+        let context = execute("+-+");
         let mut tape = HashMap::new();
         tape.insert(0, 1);
         assert_eq!(tape, context.tape.map);
@@ -145,13 +159,10 @@ mod tests {
     }
 
     #[test]
-    fn zero() {
-        let insts = parse_instructions("+-");
-        let context = execute(Context::new(), &insts);
-        let mut tape = HashMap::new();
-        tape.insert(0, 0);
-        assert_eq!(tape, context.tape.map);
-        assert_eq!(0, context.tape.head);
+    fn head1() {
+        let context = execute("><>");
+        assert_eq!(true, context.tape.is_empty());
+        assert_eq!(1, context.tape.head);
     }
 
     /*
