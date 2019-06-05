@@ -27,12 +27,8 @@ impl From<char> for Instruction {
     }
 }
 
-fn parse_char(ch: char) -> Instruction {
-    ch.into()
-}
-
 fn parse_instructions(inst: &str) -> Vec<Instruction> {
-    inst.chars().map(parse_char).collect()
+    inst.chars().map(|ch| ch.into()).collect()
 }
 
 #[cfg(test)]
