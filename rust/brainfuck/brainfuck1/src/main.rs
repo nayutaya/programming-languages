@@ -46,6 +46,7 @@ mod tests {
         assert_eq!(Instruction::Output,           '.'.into());
         assert_eq!(Instruction::Input,            ','.into());
         assert_eq!(Instruction::Invalid(' '),     ' '.into());
+        assert_eq!(Instruction::Invalid('x'),     'x'.into());
     }
 
     #[test]
