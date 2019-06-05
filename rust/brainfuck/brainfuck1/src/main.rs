@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug, PartialEq)]
 enum Instruction {
     Increment,
@@ -29,6 +31,22 @@ impl From<char> for Instruction {
 
 fn parse_instructions(inst: &str) -> Vec<Instruction> {
     inst.chars().map(|ch| ch.into()).collect()
+}
+
+struct Context {
+    tape: HashMap<usize, u8>,
+}
+
+impl Context {
+    fn new() -> Self {
+        Context {
+            tape: HashMap::new(),
+        }
+    }
+}
+
+fn execute(context: Context, insts: &Vec<Instruction>) -> Context {
+    context
 }
 
 #[cfg(test)]
@@ -66,6 +84,13 @@ mod tests {
                 Instruction::Invalid(' '),
             ],
             parse_instructions("><+-.,[] "));
+    }
+
+    #[test]
+    fn empty() {
+        let context1 = Context::new();
+        let context2 = execute(context1, &Vec::new());
+        assert_eq!(true, context2.tape.is_empty());
     }
 }
 
