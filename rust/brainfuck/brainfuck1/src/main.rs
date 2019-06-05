@@ -128,30 +128,30 @@ mod tests {
 
     #[test]
     fn empty() {
-        let insts = Vec::new();
+        let insts = parse_instructions("");
         let context = execute(Context::new(), &insts);
         assert_eq!(true, context.tape.is_empty());
+        assert_eq!(0, context.tape.head);
     }
 
     #[test]
     fn one() {
-        let insts = vec![Instruction::Increment];
+        let insts = parse_instructions("+");
         let context = execute(Context::new(), &insts);
         let mut tape = HashMap::new();
         tape.insert(0, 1);
         assert_eq!(tape, context.tape.map);
+        assert_eq!(0, context.tape.head);
     }
 
     #[test]
     fn zero() {
-        let insts = vec![
-            Instruction::Increment,
-            Instruction::Decrement,
-        ];
+        let insts = parse_instructions("+-");
         let context = execute(Context::new(), &insts);
         let mut tape = HashMap::new();
         tape.insert(0, 0);
         assert_eq!(tape, context.tape.map);
+        assert_eq!(0, context.tape.head);
     }
 
     /*
