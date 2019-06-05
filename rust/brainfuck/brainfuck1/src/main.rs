@@ -2,10 +2,10 @@ use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 enum Instruction {
+    MoveToRight,
+    MoveToLeft,
     Increment,
     Decrement,
-    PointerIncrement,
-    PointerDecrement,
     Output,
     Input,
     LoopBegin,
@@ -16,10 +16,10 @@ enum Instruction {
 impl From<char> for Instruction {
     fn from(ch: char) -> Self {
         match ch {
-            '>' => Instruction::Increment,
-            '<' => Instruction::Decrement,
-            '+' => Instruction::PointerIncrement,
-            '-' => Instruction::PointerDecrement,
+            '>' => Instruction::MoveToRight,
+            '<' => Instruction::MoveToLeft,
+            '+' => Instruction::Increment,
+            '-' => Instruction::Decrement,
             '.' => Instruction::Output,
             ',' => Instruction::Input,
             '[' => Instruction::LoopBegin,
@@ -74,7 +74,7 @@ impl Context {
 
 fn execute(context: Context, insts: &Vec<Instruction>) -> Context {
     let mut context = context;
-    if insts.len() == 1 && insts[0] == Instruction::PointerIncrement {
+    if insts.len() == 1 && insts[0] == Instruction::Increment {
         context.tape.increment();
     }
     context
@@ -86,16 +86,16 @@ mod tests {
 
     #[test]
     fn can_convert_char_into_inst() {
-        assert_eq!(Instruction::Increment,        '>'.into());
-        assert_eq!(Instruction::Decrement,        '<'.into());
-        assert_eq!(Instruction::PointerIncrement, '+'.into());
-        assert_eq!(Instruction::PointerDecrement, '-'.into());
-        assert_eq!(Instruction::LoopBegin,        '['.into());
-        assert_eq!(Instruction::LoopEnd,          ']'.into());
-        assert_eq!(Instruction::Output,           '.'.into());
-        assert_eq!(Instruction::Input,            ','.into());
-        assert_eq!(Instruction::Invalid(' '),     ' '.into());
-        assert_eq!(Instruction::Invalid('x'),     'x'.into());
+        assert_eq!(Instruction::MoveToRight,  '>'.into());
+        assert_eq!(Instruction::MoveToLeft,   '<'.into());
+        assert_eq!(Instruction::Increment,    '+'.into());
+        assert_eq!(Instruction::Decrement,    '-'.into());
+        assert_eq!(Instruction::LoopBegin,    '['.into());
+        assert_eq!(Instruction::LoopEnd,      ']'.into());
+        assert_eq!(Instruction::Output,       '.'.into());
+        assert_eq!(Instruction::Input,        ','.into());
+        assert_eq!(Instruction::Invalid(' '), ' '.into());
+        assert_eq!(Instruction::Invalid('x'), 'x'.into());
     }
 
     #[test]
@@ -104,10 +104,10 @@ mod tests {
         assert!(parse_instructions("") == Vec::new());
         assert_eq!(
             vec![
+                Instruction::MoveToRight,
+                Instruction::MoveToLeft,
                 Instruction::Increment,
                 Instruction::Decrement,
-                Instruction::PointerIncrement,
-                Instruction::PointerDecrement,
                 Instruction::Output,
                 Instruction::Input,
                 Instruction::LoopBegin,
@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn one() {
-        let context = execute(Context::new(), &vec![Instruction::PointerIncrement]);
+        let context = execute(Context::new(), &vec![Instruction::Increment]);
         assert_eq!(1, context.tape.len());
     }
 
