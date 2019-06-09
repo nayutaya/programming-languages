@@ -10,7 +10,7 @@ enum Instruction {
     Input,
     LoopBegin,
     LoopEnd,
-    Invalid(char),
+    Ignore(char),
 }
 
 impl From<char> for Instruction {
@@ -24,7 +24,7 @@ impl From<char> for Instruction {
             ',' => Instruction::Input,
             '[' => Instruction::LoopBegin,
             ']' => Instruction::LoopEnd,
-            _   => Instruction::Invalid(ch),
+            _   => Instruction::Ignore(ch),
         }
     }
 }
@@ -111,16 +111,16 @@ mod tests {
 
     #[test]
     fn can_convert_char_into_inst() {
-        assert_eq!(Instruction::MoveToRight,  '>'.into());
-        assert_eq!(Instruction::MoveToLeft,   '<'.into());
-        assert_eq!(Instruction::Increment,    '+'.into());
-        assert_eq!(Instruction::Decrement,    '-'.into());
-        assert_eq!(Instruction::LoopBegin,    '['.into());
-        assert_eq!(Instruction::LoopEnd,      ']'.into());
-        assert_eq!(Instruction::Output,       '.'.into());
-        assert_eq!(Instruction::Input,        ','.into());
-        assert_eq!(Instruction::Invalid(' '), ' '.into());
-        assert_eq!(Instruction::Invalid('x'), 'x'.into());
+        assert_eq!(Instruction::MoveToRight, '>'.into());
+        assert_eq!(Instruction::MoveToLeft,  '<'.into());
+        assert_eq!(Instruction::Increment,   '+'.into());
+        assert_eq!(Instruction::Decrement,   '-'.into());
+        assert_eq!(Instruction::LoopBegin,   '['.into());
+        assert_eq!(Instruction::LoopEnd,     ']'.into());
+        assert_eq!(Instruction::Output,      '.'.into());
+        assert_eq!(Instruction::Input,       ','.into());
+        assert_eq!(Instruction::Ignore(' '), ' '.into());
+        assert_eq!(Instruction::Ignore('x'), 'x'.into());
     }
 
     #[test]
@@ -137,7 +137,7 @@ mod tests {
                 Instruction::Input,
                 Instruction::LoopBegin,
                 Instruction::LoopEnd,
-                Instruction::Invalid(' '),
+                Instruction::Ignore(' '),
             ],
             parse_instructions("><+-.,[] "));
     }
