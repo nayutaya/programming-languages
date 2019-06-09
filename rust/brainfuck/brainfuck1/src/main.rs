@@ -123,7 +123,10 @@ fn execute(insts: &str) -> Context {
     execute_with(Context::new(), &Instruction::parse(&insts))
 }
 
-fn make_jump_table(insts: &Vec<Instruction>) -> HashMap<usize, usize> {
+#[derive(Debug, PartialEq)]
+struct LoopError {}
+
+fn make_jump_table(insts: &Vec<Instruction>) -> Result<HashMap<usize, usize>, LoopError> {
     let mut map = HashMap::new();
     let mut stack = Vec::new();
     for (index, inst) in insts.iter().enumerate() {
@@ -136,16 +139,16 @@ fn make_jump_table(insts: &Vec<Instruction>) -> HashMap<usize, usize> {
                     map.insert(to, index);
                     map.insert(index, to);
                 } else {
-                    // TODO: error
+                    return Err(LoopError {});
                 }
             }
             _ => { /* nop */ }
         }
     }
     if !stack.is_empty() {
-        // TODO: error
+        return Err(LoopError {});
     }
-    map
+    Ok(map)
 }
 
 #[cfg(test)]
@@ -268,12 +271,12 @@ mod tests {
 
     #[test]
     fn jump() {
-        assert!(make_jump_table(&Instruction::parse("")) == HashMap::new());
+        assert!(make_jump_table(&Instruction::parse("")) == Ok(HashMap::new()));
         {
             let mut map = HashMap::new();
             map.insert(0, 1);
             map.insert(1, 0);
-            assert_eq!(map, make_jump_table(&Instruction::parse("[]")));
+            assert_eq!(Ok(map), make_jump_table(&Instruction::parse("[]")));
         }
         {
             let mut map = HashMap::new();
@@ -281,18 +284,10 @@ mod tests {
             map.insert(3, 0);
             map.insert(1, 2);
             map.insert(2, 1);
-            assert_eq!(map, make_jump_table(&Instruction::parse("[[]]")));
+            assert_eq!(Ok(map), make_jump_table(&Instruction::parse("[[]]")));
         }
-        {
-            let mut map = HashMap::new();
-            assert_eq!(map, make_jump_table(&Instruction::parse("[")));
-            // TODO: error
-        }
-        {
-            let mut map = HashMap::new();
-            assert_eq!(map, make_jump_table(&Instruction::parse("]")));
-            // TODO: error
-        }
+        assert_eq!(Err(LoopError {}), make_jump_table(&Instruction::parse("[")));
+        assert_eq!(Err(LoopError {}), make_jump_table(&Instruction::parse("]")));
     }
 }
 
