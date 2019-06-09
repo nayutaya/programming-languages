@@ -30,7 +30,7 @@ impl From<char> for Instruction {
 }
 
 fn parse_instructions(inst: &str) -> Vec<Instruction> {
-    inst.chars().map(|ch| ch.into()).collect()
+    inst.chars().map(Instruction::from).collect()
 }
 
 struct Tape {
