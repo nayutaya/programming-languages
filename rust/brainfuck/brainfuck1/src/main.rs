@@ -123,6 +123,31 @@ fn execute(insts: &str) -> Context {
     execute_with(Context::new(), &Instruction::parse(&insts))
 }
 
+fn make_jump_table(insts: &Vec<Instruction>) -> HashMap<usize, usize> {
+    let mut map = HashMap::new();
+    let mut stack = Vec::new();
+    for (index, inst) in insts.iter().enumerate() {
+        match inst {
+            Instruction::LoopBegin => {
+                stack.push(index);
+            }
+            Instruction::LoopEnd => {
+                if let Some(to) = stack.pop() {
+                    map.insert(to, index);
+                    map.insert(index, to);
+                } else {
+                    // TODO: error
+                }
+            }
+            _ => { /* nop */ }
+        }
+    }
+    if !stack.is_empty() {
+        // TODO: error
+    }
+    map
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -240,6 +265,35 @@ mod tests {
         // assert_eq!(true, context2.tape.is_empty());
     }
     */
+
+    #[test]
+    fn jump() {
+        assert!(make_jump_table(&Instruction::parse("")) == HashMap::new());
+        {
+            let mut map = HashMap::new();
+            map.insert(0, 1);
+            map.insert(1, 0);
+            assert_eq!(map, make_jump_table(&Instruction::parse("[]")));
+        }
+        {
+            let mut map = HashMap::new();
+            map.insert(0, 3);
+            map.insert(3, 0);
+            map.insert(1, 2);
+            map.insert(2, 1);
+            assert_eq!(map, make_jump_table(&Instruction::parse("[[]]")));
+        }
+        {
+            let mut map = HashMap::new();
+            assert_eq!(map, make_jump_table(&Instruction::parse("[")));
+            // TODO: error
+        }
+        {
+            let mut map = HashMap::new();
+            assert_eq!(map, make_jump_table(&Instruction::parse("]")));
+            // TODO: error
+        }
+    }
 }
 
 fn main() {
