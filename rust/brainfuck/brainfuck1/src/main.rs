@@ -101,8 +101,11 @@ impl Context {
 
 fn execute_with(context: Context, insts: &Vec<Instruction>) -> Context {
     let mut context = context;
-    for inst in insts {
-        match inst {
+    if insts.len() == 0 { return context; }
+
+    let mut pc: usize = 0;
+    loop {
+        match insts[pc] {
             Instruction::MoveToRight => { context.tape.move_to_right(); }
             Instruction::MoveToLeft  => { context.tape.move_to_left(); }
             Instruction::Increment   => { context.tape.increment(); }
@@ -110,6 +113,8 @@ fn execute_with(context: Context, insts: &Vec<Instruction>) -> Context {
             Instruction::Output      => { context.output(); }
             _ => {}
         }
+        pc += 1;
+        if pc >= insts.len() { break; }
     }
     context
 }
@@ -196,6 +201,24 @@ mod tests {
         assert_eq!(0, context.tape.head);
         assert_eq!(vec![1u8], context.output);
     }
+
+    #[test]
+    fn empty_loop() {
+        let context = execute("[]");
+        assert_eq!(true, context.tape.is_empty());
+        assert_eq!(0, context.tape.head);
+        assert_eq!(0, context.output.len())
+    }
+
+    /*
+    #[test]
+    fn empty_loop3() {
+        let context = execute("+++[.-]");
+        assert_eq!(false, context.tape.is_empty());
+        assert_eq!(0, context.tape.head);
+        assert_eq!(vec![3u8, 2u8, 1u8], context.output);
+    }
+    */
 
     /*
     #[test]
