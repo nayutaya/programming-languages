@@ -13,6 +13,12 @@ enum Instruction {
     Ignore(char),
 }
 
+impl Instruction {
+    fn parse(inst: &str) -> Vec<Instruction> {
+        inst.chars().map(Instruction::from).collect()
+    }
+}
+
 impl From<char> for Instruction {
     fn from(ch: char) -> Self {
         match ch {
@@ -27,10 +33,6 @@ impl From<char> for Instruction {
             _   => Instruction::Ignore(ch),
         }
     }
-}
-
-fn parse_instructions(inst: &str) -> Vec<Instruction> {
-    inst.chars().map(Instruction::from).collect()
 }
 
 struct Tape {
@@ -77,12 +79,22 @@ impl Tape {
 
 struct Context {
     tape: Tape,
+    output: Vec<u8>,
 }
 
 impl Context {
     fn new() -> Self {
         Context {
             tape: Tape::new(),
+            output: Vec::new(),
+        }
+    }
+
+    fn output(&mut self) {
+        if let Some(ch) = self.tape.map.get(&self.tape.head) {
+            self.output.push(*ch);
+        } else {
+            self.output.push(0);
         }
     }
 }
@@ -95,6 +107,7 @@ fn execute_with(context: Context, insts: &Vec<Instruction>) -> Context {
             Instruction::MoveToLeft  => { context.tape.move_to_left(); }
             Instruction::Increment   => { context.tape.increment(); }
             Instruction::Decrement   => { context.tape.decrement(); }
+            Instruction::Output      => { context.output(); }
             _ => {}
         }
     }
@@ -102,7 +115,7 @@ fn execute_with(context: Context, insts: &Vec<Instruction>) -> Context {
 }
 
 fn execute(insts: &str) -> Context {
-    execute_with(Context::new(), &parse_instructions(&insts))
+    execute_with(Context::new(), &Instruction::parse(&insts))
 }
 
 #[cfg(test)]
@@ -126,7 +139,7 @@ mod tests {
     #[test]
     fn can_parse_string() {
         // assert_eq!(Vec::new(), parse_instructions(""));
-        assert!(parse_instructions("") == Vec::new());
+        assert!(Instruction::parse("") == Vec::new());
         assert_eq!(
             vec![
                 Instruction::MoveToRight,
@@ -139,7 +152,7 @@ mod tests {
                 Instruction::LoopEnd,
                 Instruction::Ignore(' '),
             ],
-            parse_instructions("><+-.,[] "));
+            Instruction::parse("><+-.,[] "));
     }
 
     #[test]
@@ -147,6 +160,7 @@ mod tests {
         let context = execute("");
         assert_eq!(true, context.tape.is_empty());
         assert_eq!(0, context.tape.head);
+        assert_eq!(0, context.output.len())
     }
 
     #[test]
@@ -156,6 +170,7 @@ mod tests {
         tape.insert(0, 1);
         assert_eq!(tape, context.tape.map);
         assert_eq!(0, context.tape.head);
+        assert_eq!(0, context.output.len())
     }
 
     #[test]
@@ -163,7 +178,34 @@ mod tests {
         let context = execute("><>");
         assert_eq!(true, context.tape.is_empty());
         assert_eq!(1, context.tape.head);
+        assert_eq!(0, context.output.len())
     }
+
+    #[test]
+    fn print_0() {
+        let context = execute(".");
+        assert_eq!(true, context.tape.is_empty());
+        assert_eq!(0, context.tape.head);
+        assert_eq!(vec![0u8], context.output);
+    }
+
+    #[test]
+    fn print_1() {
+        let context = execute("+.");
+        assert_eq!(false, context.tape.is_empty());
+        assert_eq!(0, context.tape.head);
+        assert_eq!(vec![1u8], context.output);
+    }
+
+    /*
+    #[test]
+    fn print_a() {
+        let context = execute("++++++[>++++++++++<-]>+++++.");
+        assert_eq!(false, context.tape.is_empty());
+        assert_eq!(1, context.tape.head);
+        assert_eq!(vec![65u8], context.output);
+    }
+    */
 
     /*
     #[test]
