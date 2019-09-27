@@ -17,3 +17,12 @@ RUN git clone https://github.com/espressif/llvm-xtensa.git /root/llvm-xtensa \
 RUN git clone https://github.com/espressif/clang-xtensa.git /root/llvm-xtensa/tools/clang \
   && cd /root/llvm-xtensa/tools/clang/ \
   && git checkout 248d9ce8765248d953c3e5ef4022fb350bbe6c51
+RUN mkdir --parents /root/build/llvm-xtensa \
+  && cd /root/build/llvm-xtensa/ \
+  && cmake \
+    -D CMAKE_INSTALL_PREFIX="/opt/llvm-xtensa" \
+    -D CMAKE_BUILD_TYPE="Release" \
+    -D LLVM_TARGETS_TO_BUILD="X86;Xtensa" \
+    -G "Ninja" \
+    /root/llvm-xtensa \
+  && ninja install
