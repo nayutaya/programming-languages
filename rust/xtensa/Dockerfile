@@ -36,3 +36,15 @@ RUN git clone https://github.com/MabezDev/rust-xtensa /root/rust-xtensa \
     --prefix /opt/rust-xtensa \
   && ./x.py build \
   && ./x.py install
+RUN cp --recursive /root/rust-xtensa/src /opt/rust-xtensa
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --no-modify-path
+SHELL ["/bin/bash", "-c"]
+RUN source $HOME/.cargo/env \
+  && rustup toolchain link xtensa /opt/rust-xtensa \
+  && rustup default xtensa \
+  && rustup toolchain list
+RUN source $HOME/.cargo/env \
+  && cargo install cargo-xbuild
+
+ENV XARGO_RUST_SRC /opt/rust-xtensa/src
+RUN echo 'source $HOME/.cargo/env' >> ~/.bashrc
