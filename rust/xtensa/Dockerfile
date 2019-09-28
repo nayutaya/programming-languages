@@ -26,3 +26,13 @@ RUN mkdir --parents /root/build/llvm-xtensa \
     -G "Ninja" \
     /root/llvm-xtensa \
   && ninja install
+RUN git clone https://github.com/MabezDev/rust-xtensa /root/rust-xtensa \
+  && cd /root/rust-xtensa/ \
+  && mkdir --parents /opt/rust-xtensa \
+  && git checkout b365cff41a60df8fd5f1237ef71897edad0375dd \
+  && mkdir --parents /root/build/rust-xtensa \
+  && ./configure \
+    --llvm-root /root/build/llvm-xtensa \
+    --prefix /opt/rust-xtensa \
+  && ./x.py build \
+  && ./x.py install
