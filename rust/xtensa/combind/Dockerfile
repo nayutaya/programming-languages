@@ -27,3 +27,12 @@ FROM ubuntu-fetch AS repo-clang-xtensa
 RUN git clone https://github.com/espressif/clang-xtensa.git /root/repo/clang-xtensa \
   && cd /root/repo/clang-xtensa/ \
   && git checkout 248d9ce8765248d953c3e5ef4022fb350bbe6c51
+
+#
+# A stage building llvm-xtensa.
+#
+FROM ubuntu:18.04 AS build-llvm-xtensa
+
+COPY --from=repo-llvm-xtensa /root/repo/llvm-xtensa /root/repo/llvm-xtensa
+COPY --from=repo-clang-xtensa /root/repo/clang-xtensa /root/repo/llvm-xtensa/tools/clang
+RUN ls -l /root/repo/llvm-xtensa && ls -l /root/repo/llvm-xtensa/tools/clang
