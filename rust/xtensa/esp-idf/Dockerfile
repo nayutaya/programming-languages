@@ -23,3 +23,4 @@ RUN cd /root/ \
   && wget --quiet https://dl.espressif.com/dl/xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz \
   && tar zxfv xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz -C /opt \
   && rm xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz
+ENV PATH /opt/xtensa-esp32-elf/bin:${PATH}
