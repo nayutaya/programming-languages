@@ -13,7 +13,7 @@ RUN apt-get update \
 #
 # A stage fetching llvm-xtensa repository.
 #
-FROM ubuntu-fetch AS repo-llvm-xtensa
+FROM ubuntu-fetch AS fetch-llvm-xtensa
 
 RUN git clone https://github.com/espressif/llvm-xtensa.git /root/repo/llvm-xtensa \
   && cd /root/repo/llvm-xtensa/ \
@@ -22,17 +22,34 @@ RUN git clone https://github.com/espressif/llvm-xtensa.git /root/repo/llvm-xtens
 #
 # A stage fetching clang-xtensa repository.
 #
-FROM ubuntu-fetch AS repo-clang-xtensa
+FROM ubuntu-fetch AS fetch-clang-xtensa
 
 RUN git clone https://github.com/espressif/clang-xtensa.git /root/repo/clang-xtensa \
   && cd /root/repo/clang-xtensa/ \
   && git checkout 248d9ce8765248d953c3e5ef4022fb350bbe6c51
 
 #
+# A stage fetching rust-xtensa repository.
+#
+FROM ubuntu-fetch AS fetch-rust-xtensa
+
+RUN git clone https://github.com/MabezDev/rust-xtensa /root/repo/rust-xtensa \
+  && cd /root/repo/rust-xtensa/ \
+  && git checkout b365cff41a60df8fd5f1237ef71897edad0375dd \
+
+#
 # A stage building llvm-xtensa.
 #
 FROM ubuntu:18.04 AS build-llvm-xtensa
 
-COPY --from=repo-llvm-xtensa /root/repo/llvm-xtensa /root/repo/llvm-xtensa
-COPY --from=repo-clang-xtensa /root/repo/clang-xtensa /root/repo/llvm-xtensa/tools/clang
-RUN ls -l /root/repo/llvm-xtensa && ls -l /root/repo/llvm-xtensa/tools/clang
+COPY --from=fetch-llvm-xtensa /root/repo/llvm-xtensa /root/repo/llvm-xtensa
+COPY --from=fetch-clang-xtensa /root/repo/clang-xtensa /root/repo/llvm-xtensa/tools/clang
+RUN mkdir --parents /root/build/llvm-xtensa \
+  && cd /root/build/llvm-xtensa/ \
+  && cmake \
+    -D CMAKE_INSTALL_PREFIX="/opt/llvm-xtensa" \
+    -D CMAKE_BUILD_TYPE="Release" \
+    -D LLVM_TARGETS_TO_BUILD="X86;Xtensa" \
+    -G "Ninja" \
+    /root/repo/llvm-xtensa \
+  && ninja install
