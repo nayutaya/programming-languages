@@ -24,3 +24,5 @@ RUN cd /root/ \
   && tar zxfv xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz -C /opt \
   && rm xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz
 ENV PATH /opt/xtensa-esp32-elf/bin:${PATH}
+RUN git clone --branch v3.3 --depth 1 https://github.com/espressif/esp-idf.git /opt/esp-idf
+ENV IDF_PATH /opt/esp-idf
