@@ -42,6 +42,15 @@ RUN git clone https://github.com/MabezDev/rust-xtensa.git /root/repo/rust-xtensa
 #
 FROM ubuntu:18.04 AS build-llvm-xtensa
 
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    cmake \
+    ninja-build \
+    python \
+  && rm --recursive --force /var/lib/apt/lists/*
+
 COPY --from=fetch-llvm-xtensa /root/repo/llvm-xtensa /root/repo/llvm-xtensa
 COPY --from=fetch-clang-xtensa /root/repo/clang-xtensa /root/repo/llvm-xtensa/tools/clang
 RUN mkdir --parents /root/build/llvm-xtensa \
