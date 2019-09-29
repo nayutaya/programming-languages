@@ -1,7 +1,7 @@
 #
 # A stage for fetching data from Git and URL.
 #
-FROM ubuntu:18.04 AS ubuntu-fetch
+FROM ubuntu:18.04 AS ubuntu-for-fetch
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
@@ -13,7 +13,7 @@ RUN apt-get update \
 #
 # A stage fetching llvm-xtensa repository.
 #
-FROM ubuntu-fetch AS fetch-llvm-xtensa
+FROM ubuntu-for-fetch AS fetch-llvm-xtensa
 
 RUN git clone https://github.com/espressif/llvm-xtensa.git /root/repo/llvm-xtensa \
   && cd /root/repo/llvm-xtensa/ \
@@ -22,7 +22,7 @@ RUN git clone https://github.com/espressif/llvm-xtensa.git /root/repo/llvm-xtens
 #
 # A stage fetching clang-xtensa repository.
 #
-FROM ubuntu-fetch AS fetch-clang-xtensa
+FROM ubuntu-for-fetch AS fetch-clang-xtensa
 
 RUN git clone https://github.com/espressif/clang-xtensa.git /root/repo/clang-xtensa \
   && cd /root/repo/clang-xtensa/ \
@@ -31,9 +31,9 @@ RUN git clone https://github.com/espressif/clang-xtensa.git /root/repo/clang-xte
 #
 # A stage fetching rust-xtensa repository.
 #
-FROM ubuntu-fetch AS fetch-rust-xtensa
+FROM ubuntu-for-fetch AS fetch-rust-xtensa
 
-RUN git clone https://github.com/MabezDev/rust-xtensa /root/repo/rust-xtensa \
+RUN git clone https://github.com/MabezDev/rust-xtensa.git /root/repo/rust-xtensa \
   && cd /root/repo/rust-xtensa/ \
   && git checkout b365cff41a60df8fd5f1237ef71897edad0375dd \
 
