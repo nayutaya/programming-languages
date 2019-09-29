@@ -122,7 +122,7 @@ COPY --from=fetch-esp-idf /opt/xtensa-esp32-elf /opt/xtensa-esp32-elf
 COPY --from=fetch-esp-idf /opt/esp-idf /opt/esp-idf
 
 SHELL ["/bin/bash", "-c"]
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain none --no-modify-path
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --no-modify-path
 RUN source $HOME/.cargo/env \
   && rustup toolchain link xtensa /opt/rust-xtensa \
   && rustup default xtensa \
