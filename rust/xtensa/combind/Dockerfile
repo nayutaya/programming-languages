@@ -46,7 +46,8 @@ RUN ARCHIVE_NAME=xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz \
   && curl -o /root/${ARCHIVE_NAME} https://dl.espressif.com/dl/${ARCHIVE_NAME} \
   && tar zxfv /root/${ARCHIVE_NAME} -C /opt \
   && rm /root/${ARCHIVE_NAME}
-RUN git clone --branch v3.3 --depth 1 https://github.com/espressif/esp-idf.git /opt/esp-idf
+RUN git clone --branch v3.3 --depth 1 https://github.com/espressif/esp-idf.git /opt/esp-idf \
+  && rm --recursive --force /opt/esp-idf/.git
 
 #
 # A stage building llvm-xtensa.
@@ -116,7 +117,6 @@ RUN apt-get update \
     python-setuptools \
   && rm --recursive --force /var/lib/apt/lists/*
 
-COPY --from=build-llvm-xtensa /opt/llvm-xtensa /opt/llvm-xtensa
 COPY --from=build-llvm-xtensa /opt/rust-xtensa /opt/rust-xtensa
 COPY --from=fetch-esp-idf /opt/xtensa-esp32-elf /opt/xtensa-esp32-elf
 COPY --from=fetch-esp-idf /opt/esp-idf /opt/esp-idf
