@@ -96,8 +96,41 @@ RUN cp --recursive /root/repo/rust-xtensa/src /opt/rust-xtensa
 #
 FROM ubuntu:18.04 AS devel
 
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+    bison \
+    ca-certificates \
+    curl \
+    flex \
+    gcc \
+    git-core \
+    gperf \
+    libncurses-dev \
+    make \
+    python \
+    python-cryptography \
+    python-future \
+    python-pip \
+    python-pyparsing \
+    python-serial \
+    python-setuptools \
+  && rm --recursive --force /var/lib/apt/lists/*
+
+COPY --from=build-llvm-xtensa /opt/llvm-xtensa /opt/llvm-xtensa
+COPY --from=build-llvm-xtensa /opt/rust-xtensa /opt/rust-xtensa
 COPY --from=fetch-esp-idf /opt/xtensa-esp32-elf /opt/xtensa-esp32-elf
 COPY --from=fetch-esp-idf /opt/esp-idf /opt/esp-idf
 
+SHELL ["/bin/bash", "-c"]
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain none --no-modify-path
+RUN source $HOME/.cargo/env \
+  && rustup toolchain link xtensa /opt/rust-xtensa \
+  && rustup default xtensa \
+  && rustup toolchain list
+RUN source $HOME/.cargo/env \
+  && cargo install cargo-xbuild
+
 ENV PATH /opt/xtensa-esp32-elf/bin:${PATH}
 ENV IDF_PATH /opt/esp-idf
+ENV XARGO_RUST_SRC /opt/rust-xtensa/src
+RUN echo 'source $HOME/.cargo/env' >> ~/.bashrc
