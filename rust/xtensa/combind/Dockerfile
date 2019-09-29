@@ -35,7 +35,7 @@ FROM ubuntu-for-fetch AS fetch-rust-xtensa
 
 RUN git clone https://github.com/MabezDev/rust-xtensa.git /root/repo/rust-xtensa \
   && cd /root/repo/rust-xtensa/ \
-  && git checkout b365cff41a60df8fd5f1237ef71897edad0375dd \
+  && git checkout b365cff41a60df8fd5f1237ef71897edad0375dd
 
 #
 # A stage building llvm-xtensa.
@@ -53,3 +53,13 @@ RUN mkdir --parents /root/build/llvm-xtensa \
     -G "Ninja" \
     /root/repo/llvm-xtensa \
   && ninja install
+
+COPY --from=fetch-rust-xtensa /root/repo/rust-xtensa /root/repo/rust-xtensa
+RUN mkdir --parents /root/build/rust-xtensa \
+  && /root/repo/rust-xtensa/ \
+  && ./configure \
+    --llvm-root /root/build/llvm-xtensa \
+    --prefix /opt/rust-xtensa \
+  && ./x.py build \
+  && ./x.py install
+RUN cp --recursive /root/repo/rust-xtensa/src /opt/rust-xtensa
