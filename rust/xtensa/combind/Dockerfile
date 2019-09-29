@@ -74,6 +74,12 @@ RUN mkdir --parents /root/build/llvm-xtensa \
     /root/repo/llvm-xtensa \
   && ninja install
 
+# TODO: あとで統合する
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends \
+    curl \
+  && rm --recursive --force /var/lib/apt/lists/*
+
 COPY --from=fetch-rust-xtensa /root/repo/rust-xtensa /root/repo/rust-xtensa
 RUN mkdir --parents /root/build/rust-xtensa \
   && cd /root/repo/rust-xtensa/ \
