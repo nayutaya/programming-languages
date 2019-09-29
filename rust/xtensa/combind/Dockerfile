@@ -82,7 +82,7 @@ RUN apt-get update \
   && rm --recursive --force /var/lib/apt/lists/*
 
 COPY --from=fetch-rust-xtensa /root/repo/rust-xtensa /root/repo/rust-xtensa
-RUN mkdir --parents /root/build/rust-xtensa \
+RUN mkdir --parents /opt/rust-xtensa \
   && cd /root/repo/rust-xtensa/ \
   && ./configure \
     --llvm-root /root/build/llvm-xtensa \
