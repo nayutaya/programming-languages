@@ -9,8 +9,7 @@ services:
     environment:
       - USER=${USER}
       - TZ=Asia/Tokyo
-    ports:
-      - "50051:50051"
+    network_mode: "host"
   grpc_server:
     build: grpc_server
     environment:
