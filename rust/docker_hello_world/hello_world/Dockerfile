@@ -1,4 +1,4 @@
-FROM rust:1.41-buster AS development
+FROM rust:1.41-slim-buster AS development
 WORKDIR /root/
 COPY . .
 RUN cargo install --path . --root /opt
