@@ -1,0 +1,10 @@
+version: "3"
+services:
+  shell:
+    image: rust:1.41-buster
+    volumes:
+      - ".:/workspace"
+    working_dir: /workspace
+    user: "${USER_ID}:${GROUP_ID}"
+  hello_world:
+    build: hello_world

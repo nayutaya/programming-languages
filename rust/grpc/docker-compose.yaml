@@ -1,0 +1,22 @@
+version: "3"
+services:
+  shell:
+    build: shell
+    volumes:
+      - ".:/workspace"
+    working_dir: /workspace
+    user: "${USER_ID}:${GROUP_ID}"
+    environment:
+      - USER=${USER}
+      - TZ=Asia/Tokyo
+    network_mode: "host"
+  grpc_server:
+    build: grpc_server
+    environment:
+      - TZ=Asia/Tokyo
+    network_mode: "host"
+  grpc_client:
+    build: grpc_client
+    environment:
+      - TZ=Asia/Tokyo
+    network_mode: "host"
