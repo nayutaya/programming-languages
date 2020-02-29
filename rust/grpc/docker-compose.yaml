@@ -8,5 +8,5 @@ services:
     user: "${USER_ID}:${GROUP_ID}"
     environment:
       - USER=${USER}
-  #hello_world:
-  #  build: hello_world
+  server:
+    build: server
