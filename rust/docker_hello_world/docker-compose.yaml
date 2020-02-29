@@ -5,3 +5,10 @@ services:
     volumes:
       - ".:/workspace"
     working_dir: /workspace
+    user: "${USER_ID}:${GROUP_ID}"
+    # environment:
+    #   - USER_ID=${USER_ID}
+    #   - GROUP_ID=${GROUP_ID}
+    #   - USER=${USER}
+    # groupadd --gid ${GROUP_ID} ${USER}
+    # useradd --uid ${USER_ID} --gid ${GROUP_ID} --create-home ${USER}
