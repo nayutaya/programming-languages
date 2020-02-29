@@ -1,0 +1,7 @@
+version: "3"
+services:
+  shell:
+    image: rust:1.41-buster
+    volumes:
+      - ".:/workspace"
+    working_dir: /workspace
