@@ -1,12 +1,19 @@
 version: "3"
 services:
   shell:
-    image: rust:1.41-buster
+    build: shell
     volumes:
       - ".:/workspace"
     working_dir: /workspace
     user: "${USER_ID}:${GROUP_ID}"
     environment:
       - USER=${USER}
+      - TZ=Asia/Tokyo
+    ports:
+      - "50051:50051"
   grpc_server:
     build: grpc_server
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - "50051:50051"
