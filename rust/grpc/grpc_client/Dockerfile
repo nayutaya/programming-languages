@@ -13,4 +13,4 @@ RUN cargo install --path . --root /opt
 
 FROM debian:buster-slim
 COPY --from=development /opt /opt
-CMD ["/opt/bin/grpc_server"]
+CMD ["/opt/bin/grpc_client"]

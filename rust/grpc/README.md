@@ -8,7 +8,9 @@ export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 docker-compose run --service-ports shell
 docker-compose build grpc_server
-docker-compose run --service-ports grpc_server
+docker-compose run grpc_server
+docker-compose build grpc_client
+docker-compose run grpc_client
 
 cd ~/repo/github.com/nayutaya/programming-languages/rust/grpc/grpc_server/
 grpcurl -plaintext \
